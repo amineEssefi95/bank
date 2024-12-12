@@ -42,9 +42,7 @@ public class OperationControllerTest {
         when(operationService.deposit(invalidAmount)).thenThrow(new IllegalArgumentException("Amount must be positive"));
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            operationController.deposit(invalidAmount);
-        });
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> operationController.deposit(invalidAmount));
 
         assertEquals("Amount must be positive", exception.getMessage());
         verify(operationService, times(1)).deposit(invalidAmount); // Ensures the service method is called
