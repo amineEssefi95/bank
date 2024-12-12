@@ -59,4 +59,12 @@ public class OperationServiceTest {
         assertEquals("Withdrawal amount must be positive", exception.getMessage());
     }
 
+    @Test
+    void testInsufficientFundsWithdraw() {
+        operationService.deposit(300);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> operationService.withdraw(500));
+
+        assertEquals("Insufficient funds", exception.getMessage());
+    }
+
 }
