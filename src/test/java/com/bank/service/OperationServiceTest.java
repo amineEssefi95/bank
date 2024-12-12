@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
@@ -22,6 +23,14 @@ public class OperationServiceTest {
         assertEquals(1000, operationService.getOperations().getFirst().getAmount());
         assertEquals(1000, operationService.getOperations().getFirst().getBalance());
         assertEquals("DEPOSIT", operationService.getOperations().getFirst().getType());
+    }
+
+
+    @Test
+    void testNegativeDeposit() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> operationService.deposit(-1000));
+
+        assertEquals("Deposit amount must be positive", exception.getMessage());
     }
 
 }

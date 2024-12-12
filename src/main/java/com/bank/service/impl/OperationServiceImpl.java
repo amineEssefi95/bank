@@ -16,6 +16,9 @@ public class OperationServiceImpl implements OperationService {
 
     @Override
     public void deposit(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be positive");
+        }
         balance += amount;
         operations.add(new Operation("DEPOSIT", new Date(), amount, balance));
     }
