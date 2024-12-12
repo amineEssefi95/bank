@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface OperationService {
 
-    void deposit(int i);
+    Integer deposit(int i);
     List<Operation> getOperations();
 }
