@@ -1,5 +1,6 @@
 package com.bank.controller;
 
+import com.bank.model.Operation;
 import com.bank.service.OperationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Date;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class OperationControllerTest {
@@ -62,5 +67,14 @@ public class OperationControllerTest {
 
         mockMvc.perform(get("/withdraw/{amount}", -100))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    void testGetOperations() throws Exception {
+        Mockito.when(operationService.getOperations()).thenReturn(List.of(new Operation("DEPOSIT", new Date(), 1000, 1000), new Operation("WITHDRAWAL", new Date(), 100, 900)));
+
+        mockMvc.perform(get("/operations"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)));
     }
 }
