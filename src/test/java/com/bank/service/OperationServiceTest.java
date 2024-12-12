@@ -1,5 +1,7 @@
 package com.bank.service;
 
+import com.bank.service.impl.OperationServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +16,11 @@ public class OperationServiceTest {
 
     @Autowired
     private OperationService operationService;
+
+    @BeforeEach()
+    public void setUp() {
+        operationService = new OperationServiceImpl();
+    }
 
 
     @Test
@@ -31,6 +38,25 @@ public class OperationServiceTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> operationService.deposit(-1000));
 
         assertEquals("Deposit amount must be positive", exception.getMessage());
+    }
+
+
+    @Test
+    void testWithdraw() {
+        operationService.deposit(1000);
+        operationService.withdraw(100);
+        assertEquals(2, operationService.getOperations().size());
+        assertEquals(900, operationService.getOperations().getLast().getBalance());
+        assertEquals(100, operationService.getOperations().getLast().getAmount());
+        assertEquals("WITHDRAWAL", operationService.getOperations().getLast().getType());
+    }
+
+
+    @Test
+    void testNegativeWithdraw() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> operationService.withdraw(-500));
+
+        assertEquals("Withdrawal amount must be positive", exception.getMessage());
     }
 
 }
