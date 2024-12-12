@@ -15,7 +15,7 @@ public class OperationServiceImpl implements OperationService {
     private final List<Operation> operations = new ArrayList<>();
 
     @Override
-    public Integer deposit(int amount) {
+    public Integer deposit(Integer amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Deposit amount must be positive");
         }
@@ -28,5 +28,18 @@ public class OperationServiceImpl implements OperationService {
     @Override
     public List<Operation> getOperations() {
         return operations;
+    }
+
+    @Override
+    public Integer withdraw(Integer amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Withdrawal amount must be positive");
+        }
+        if (amount > balance) {
+            throw new IllegalArgumentException("Insufficient funds");
+        }
+        balance -= amount;
+        operations.add(new Operation("WITHDRAWAL", new Date(), amount, balance));
+        return balance;
     }
 }
