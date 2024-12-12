@@ -1,10 +1,13 @@
 package com.bank.controller;
 
+import com.bank.model.Operation;
 import com.bank.service.OperationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class OperationController {
@@ -31,6 +34,11 @@ public class OperationController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/operations")
+    public ResponseEntity<List<Operation>> getOperations() {
+        return ResponseEntity.ok(operationService.getOperations());
     }
 
 }

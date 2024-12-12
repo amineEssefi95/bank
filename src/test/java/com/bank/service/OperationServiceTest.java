@@ -68,4 +68,17 @@ public class OperationServiceTest {
         assertEquals("Insufficient funds", exception.getMessage());
     }
 
+    @Test
+    void testGetOperations() {
+
+        operationService.deposit(1000);
+        operationService.withdraw(100);
+
+        assertEquals(2, operationService.getOperations().size());
+        assertEquals(1000, operationService.getOperations().getFirst().getAmount());
+        assertEquals("DEPOSIT", operationService.getOperations().getFirst().getType());
+        assertEquals(100, operationService.getOperations().getLast().getAmount());
+        assertEquals("WITHDRAWAL", operationService.getOperations().getLast().getType());
+    }
+
 }
