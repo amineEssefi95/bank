@@ -1,6 +1,7 @@
 package com.bank.controller;
 
 import com.bank.service.OperationService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +16,21 @@ public class OperationController {
     }
 
     @GetMapping("/deposit/{amount}")
-    public Integer deposit(@PathVariable Integer amount) {
-        return operationService.deposit(amount);
+    public ResponseEntity<Integer> deposit(@PathVariable Integer amount) {
+        try {
+            return ResponseEntity.ok(operationService.deposit(amount));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/withdraw/{amount}")
+    public ResponseEntity<Integer> withdraw(@PathVariable Integer amount) {
+        try {
+            return ResponseEntity.ok(operationService.withdraw(amount));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
 }

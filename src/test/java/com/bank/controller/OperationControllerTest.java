@@ -5,11 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class OperationControllerTest {
     @Mock
@@ -18,33 +20,47 @@ public class OperationControllerTest {
     @InjectMocks
     private OperationController operationController;
 
+    private MockMvc mockMvc;
+
     @BeforeEach
-    void setUp() {
+    public void init() {
         MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(operationController).build();
     }
 
     @Test
-    void testDeposit() {
-        int amount = 100;
-        int expectedBalance = 200;
-        when(operationService.deposit(amount)).thenReturn(expectedBalance);
+    void testDepositApi() throws Exception {
 
-        Integer result = operationController.deposit(amount);
+        Mockito.when(operationService.deposit(100)).thenReturn(600);
 
-        assertEquals(expectedBalance, result);
-        verify(operationService, times(1)).deposit(amount);
+        mockMvc.perform(get("/deposit/{amount}", 100))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("600"));
     }
 
     @Test
-    void testDepositThrowsIllegalArgumentException() {
-        // Arrange
-        int invalidAmount = -50;
-        when(operationService.deposit(invalidAmount)).thenThrow(new IllegalArgumentException("Amount must be positive"));
+    void testDepositApiThrowsIllegalArgumentException() throws Exception {
+        Mockito.when(operationService.deposit(-100)).thenThrow(new IllegalArgumentException("Invalid amount"));
 
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> operationController.deposit(invalidAmount));
+        mockMvc.perform(get("/deposit/{amount}", -100))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 
-        assertEquals("Amount must be positive", exception.getMessage());
-        verify(operationService, times(1)).deposit(invalidAmount); // Ensures the service method is called
+
+    @Test
+    void testWithdrawApi() throws Exception {
+        Mockito.when(operationService.withdraw(100)).thenReturn(400);
+
+        mockMvc.perform(get("/withdraw/{amount}", 100))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("400"));
+    }
+
+    @Test
+    void testWithdrawApiThrowsIllegalArgumentException() throws Exception {
+        Mockito.when(operationService.withdraw(-100)).thenThrow(new IllegalArgumentException("Invalid amount"));
+
+        mockMvc.perform(get("/withdraw/{amount}", -100))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
